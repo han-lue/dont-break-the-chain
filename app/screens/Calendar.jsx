@@ -3,8 +3,8 @@ import { SafeAreaView} from 'react-native';
 import {CalendarList} from 'react-native-calendars';
 
 import { FIRESTORE_DB } from "../../firebaseConfig.js"
-import { addDoc, collection, onSnapshot } from "firebase/firestore"
-import { ref, set } from "firebase/database"
+import { doc, setDoc, collection, onSnapshot, deleteDoc } from "firebase/firestore"
+//import { ref, set } from "firebase/database"
 
 export default function Calendar() {
 
@@ -19,7 +19,6 @@ export default function Calendar() {
 
         snapshot.docs.forEach((doc) => { 
           links.push({
-            id: doc.id,
             ...doc.data()
           })
         });
@@ -30,29 +29,39 @@ export default function Calendar() {
     return () => subscriber();
   }, [])
 
-
-  let doc;
-
   function handlePress(date) {
-    //const ref = doc(FIRESTORE_DB, `dates/${date}`)
+    const ref = doc(FIRESTORE_DB, `dates/${date}`);
 
-    if (dates.includes({date: date})) {
-      deleteLink(date);
+    //console.log(dates)
+
+    if (dates.some( item => item['date'] == date )) {
+      deleteLink(ref, date);
     } else {
       addLink(date);
-    }
+    } 
   }
 
   function addLink(date) {
 
-    //set(ref(FIRESTORE_DB, "dates/" + date), {date: date});
+    setDoc(doc(FIRESTORE_DB, "dates", date), {
+      date: date
+    }).then(() => {
+      console.log("submitted " + date)
+    }).catch((error) => {
+      console.log(error)
+    })
 
-    doc = addDoc(collection(FIRESTORE_DB, "dates"), {date: date});
-    console.log(doc)
+   // doc = addDoc(collection(FIRESTORE_DB, "dates"), {date: date});
+    //console.log(doc)
   }
 
-  function deleteLink(date) {
-    deleteDoc()
+  function deleteLink(ref, date) {
+    deleteDoc(ref)
+    .then(() => {
+      console.log("deleted " + date)
+    }).catch((error) => {
+      console.log(error)
+    })
   }
 
   let obj;
@@ -60,7 +69,6 @@ export default function Calendar() {
   if (dates.length > 0) {
     obj = Object.assign(...dates.map(o => ({[o.date]: {activeOpacity: .5, dotColor: "purple", selectedColor: "purple", selected: true }})));
   }
-
 
   return (
     <SafeAreaView>
