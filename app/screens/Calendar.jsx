@@ -67,7 +67,7 @@ export default function Calendar() {
   let obj;
 
   if (dates.length > 0) {
-    obj = Object.assign(...dates.map(o => ({[o.date]: {activeOpacity: .5, dotColor: "purple", selectedColor: "purple", selected: true }})));
+    obj = Object.assign(...dates.map(o => ({[o.date]: { selected: true, selectedColor: "purple" }})));
   }
 
   return (
@@ -90,7 +90,7 @@ export default function Calendar() {
         handlePress(e.dateString);
       }}
 
-      markingType='default'
+      markingType={"custom"}
 
       markedDates={obj}
       />
