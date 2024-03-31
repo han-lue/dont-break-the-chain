@@ -1,17 +1,22 @@
 import React, {useEffect, useState} from 'react';
-import { SafeAreaView} from 'react-native';
+import { SafeAreaView, StyleSheet, View, Button} from 'react-native';
 import {CalendarList} from 'react-native-calendars';
 
 import { FIRESTORE_DB } from "../../firebaseConfig.js"
 import { doc, setDoc, collection, onSnapshot, deleteDoc } from "firebase/firestore"
-//import { ref, set } from "firebase/database"
+
+import "./Calendar.css";
+
 
 export default function Calendar() {
 
   const [dates, setDates] = useState([]); 
+  const [whichCalendar, setWhichCalendar] = useState("dates");
 
   useEffect(() => {
-    const linkRef = collection(FIRESTORE_DB, "dates");
+    const linkRef = collection(FIRESTORE_DB, whichCalendar);
+
+    console.log(whichCalendar)
 
     const subscriber = onSnapshot(linkRef, {
       next: (snapshot) => {
@@ -27,10 +32,10 @@ export default function Calendar() {
     });
 
     return () => subscriber();
-  }, [])
+  },[whichCalendar])
 
   function handlePress(date) {
-    const ref = doc(FIRESTORE_DB, `dates/${date}`);
+    const ref = doc(FIRESTORE_DB, `${whichCalendar}/${date}`);
 
     //console.log(dates)
 
@@ -43,7 +48,7 @@ export default function Calendar() {
 
   function addLink(date) {
 
-    setDoc(doc(FIRESTORE_DB, "dates", date), {
+    setDoc(doc(FIRESTORE_DB, whichCalendar, date), {
       date: date
     }).then(() => {
       console.log("submitted " + date)
@@ -67,11 +72,28 @@ export default function Calendar() {
   let obj;
 
   if (dates.length > 0) {
-    obj = Object.assign(...dates.map(o => ({[o.date]: { selected: true, selectedColor: "purple" }})));
+    obj = Object.assign(...dates.map(o => ({[o.date]: { 
+      customStyles: {
+        container: {
+          borderRadius: 20, 
+          width: "100%",
+          backgroundColor: "red"
+        },
+        text: {
+            color: "white"
+          }
+        }, 
+      }})));
   }
 
   return (
-    <SafeAreaView>
+    <SafeAreaView class="meow">
+      
+      <View>
+        <Button title='dates' onPress={() => setWhichCalendar("dates")}/>
+        <Button title='gym' onPress={() => setWhichCalendar("gym")}/>
+      </View>
+
       <CalendarList
 
       // Callback which gets executed when visible months change in scroll view. Default = undefined
@@ -85,11 +107,30 @@ export default function Calendar() {
       // Enable or disable vertical scroll indicator. Default = false
       showScrollIndicator={true}
 
+      firstDay={1}
     
       onDayPress={(e) => {
         handlePress(e.dateString);
       }}
 
+      //calendarStyle={{backgroundColor: "#fefe"}}
+
+      //style={{calendarBackground: "#000"}}
+
+      //style={{calendarBackground: "#000"}}
+
+      theme={{
+        'stylesheet.calendar-list.main': {
+          calendar: {
+            paddingLeft: 15, 
+            paddingRight: 15,
+            color: "#000",
+            backgroundColor: "#000",
+            calendarColor: "#000"
+          },
+        }
+      }}
+      
       markingType={"custom"}
 
       markedDates={obj}
@@ -97,3 +138,6 @@ export default function Calendar() {
     </SafeAreaView>
   );
 };
+
+const style = StyleSheet.create({
+})
