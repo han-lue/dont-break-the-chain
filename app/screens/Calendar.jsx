@@ -10,13 +10,13 @@ import "./Calendar.css";
 
 const Calendar = memo(function Calendar({activeChain}) {
 
-  const [dates, setDates] = useState([]); 
-  const [whichCalendar, setWhichCalendar] = useState(activeChain);
+  const [dates, setDates] = useState([]);
+
 
   useEffect(() => {
-    const linkRef = collection(FIRESTORE_DB, `chains/${whichCalendar}/dates`);
+    const linkRef = collection(FIRESTORE_DB, `chains/${activeChain}/dates`);
 
-    console.log(whichCalendar);
+    console.log(activeChain);
 
     const subscriber = onSnapshot(linkRef, {
       next: (snapshot) => {
@@ -32,10 +32,10 @@ const Calendar = memo(function Calendar({activeChain}) {
     });
 
     return () => subscriber();
-  },[whichCalendar])
+  }, [])
 
   function handlePress(date) {
-    const ref = doc(FIRESTORE_DB, `chains/${whichCalendar}/dates/${date}`);
+    const ref = doc(FIRESTORE_DB, `chains/${activeChain}/dates/${date}`);
 
     //console.log(dates)
 
@@ -48,7 +48,7 @@ const Calendar = memo(function Calendar({activeChain}) {
 
   function addLink(date) {
 
-    setDoc(doc(FIRESTORE_DB, `chains/${whichCalendar}/dates`, date), {
+    setDoc(doc(FIRESTORE_DB, `chains/${activeChain}/dates`, date), {
       date: date
     }).then(() => {
       console.log("submitted " + date)
