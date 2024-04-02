@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, memo} from 'react';
 import { SafeAreaView, StyleSheet, View, Button} from 'react-native';
 import {CalendarList} from 'react-native-calendars';
 
@@ -8,15 +8,15 @@ import { doc, setDoc, collection, onSnapshot, deleteDoc } from "firebase/firesto
 import "./Calendar.css";
 
 
-export default function Calendar() {
+const Calendar = memo(function Calendar({activeChain}) {
 
   const [dates, setDates] = useState([]); 
-  const [whichCalendar, setWhichCalendar] = useState("dates");
+  const [whichCalendar, setWhichCalendar] = useState(activeChain);
 
   useEffect(() => {
-    const linkRef = collection(FIRESTORE_DB, whichCalendar);
+    const linkRef = collection(FIRESTORE_DB, `chains/${whichCalendar}/dates`);
 
-    console.log(whichCalendar)
+    console.log(whichCalendar);
 
     const subscriber = onSnapshot(linkRef, {
       next: (snapshot) => {
@@ -35,7 +35,7 @@ export default function Calendar() {
   },[whichCalendar])
 
   function handlePress(date) {
-    const ref = doc(FIRESTORE_DB, `${whichCalendar}/${date}`);
+    const ref = doc(FIRESTORE_DB, `chains/${whichCalendar}/dates/${date}`);
 
     //console.log(dates)
 
@@ -48,7 +48,7 @@ export default function Calendar() {
 
   function addLink(date) {
 
-    setDoc(doc(FIRESTORE_DB, whichCalendar, date), {
+    setDoc(doc(FIRESTORE_DB, `chains/${whichCalendar}/dates`, date), {
       date: date
     }).then(() => {
       console.log("submitted " + date)
@@ -88,11 +88,7 @@ export default function Calendar() {
 
   return (
     <SafeAreaView class="meow">
-      
-      <View>
-        <Button title='dates' onPress={() => setWhichCalendar("dates")}/>
-        <Button title='gym' onPress={() => setWhichCalendar("gym")}/>
-      </View>
+    
 
       <CalendarList
 
@@ -124,9 +120,7 @@ export default function Calendar() {
           calendar: {
             paddingLeft: 15, 
             paddingRight: 15,
-            color: "#000",
-            backgroundColor: "#000",
-            calendarColor: "#000"
+            backgroundColor: "#fff"
           },
         }
       }}
@@ -137,7 +131,6 @@ export default function Calendar() {
       />
     </SafeAreaView>
   );
-};
+});
 
-const style = StyleSheet.create({
-})
+export default Calendar;
