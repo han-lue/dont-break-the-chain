@@ -13,6 +13,9 @@ import { collection, onSnapshot} from "firebase/firestore"
 
 import { FIRESTORE_DB } from "./firebaseConfig.js"
 
+import CustomDrawer from "./app/components/CustomDrawer.jsx"
+
+import Ionicons from "react-native-vector-icons/Ionicons"
 
 const Drawer = createDrawerNavigator();
 
@@ -42,12 +45,23 @@ export default function App() {
     return () => subscriber();
   },[])
 
+  function openOptions() {console.log("it works abibi")}
+
   return (
     <NavigationContainer>
-      <Drawer.Navigator>
+      <Drawer.Navigator 
+      drawerContent={props => <CustomDrawer{...props}/>}
+      screenOptions={{
+        headerShown: true
+    }} 
+      >
         {
           chains.map(chain => 
-          <Drawer.Screen name={chain.id}>
+          <Drawer.Screen name={chain.id} options={{
+            drawerIcon: () => (
+              <Ionicons name="ellipsis-horizontal-outline" size={20} onPress={()=> openOptions()}/>
+            )
+          }}>
             {(props) => <Calendar {...props} activeChain={chain.id} />}
           </Drawer.Screen>
           )
