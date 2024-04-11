@@ -9,7 +9,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import Calendar from "./app/screens/Calendar.jsx"
 import CreateChain from './app/screens/CreateChain.jsx';
 
-import { collection, onSnapshot} from "firebase/firestore"
+import { collection, onSnapshot, doc, deleteDoc, get} from "firebase/firestore"
 
 import { FIRESTORE_DB } from "./firebaseConfig.js"
 
@@ -31,21 +31,32 @@ export default function App() {
       next: (snapshot) => {
         let array = [];
 
-        snapshot.docs.forEach((doc) => { 
-          let id = doc.id;
-          console.log(id)
+        snapshot.docs.forEach((dcmt) => { 
+          let id = dcmt.id;
           array.push({
             id
           })
         });
         setChains(array);
+        console.log(array)
       },
     });
 
     return () => subscriber();
   },[])
 
-  function openOptions() {console.log("it works abibi")}
+  function openOptions(chainId) {
+    console.log(chainId);
+
+    const ref = doc(FIRESTORE_DB, `chains/${chainId}`);
+
+    deleteDoc(ref)
+    .then(() => {
+      console.log("deleted " + chainId)
+    }).catch((error) => {
+      console.log(error)
+    })
+  }
 
   return (
     <NavigationContainer>
@@ -58,8 +69,11 @@ export default function App() {
         {
           chains.map(chain => 
           <Drawer.Screen name={chain.id} options={{
+            headerStyle: {
+              backgroundColor: '#fff'
+            },
             drawerIcon: () => (
-              <Ionicons name="ellipsis-horizontal-outline" size={20} onPress={()=> openOptions()}/>
+              <Ionicons name="ellipsis-horizontal-outline" size={20} onPress={()=> openOptions(chain.id)}/>
             )
           }}>
             {(props) => <Calendar {...props} activeChain={chain.id} />}
@@ -67,7 +81,8 @@ export default function App() {
           )
         }
 
-        <Drawer.Screen name='Create New' component={CreateChain}></Drawer.Screen>
+        <Drawer.Screen name='Create New' component={CreateChain} options={{headerStyle: {}}}
+            ></Drawer.Screen>
         
       </Drawer.Navigator>
     </NavigationContainer>

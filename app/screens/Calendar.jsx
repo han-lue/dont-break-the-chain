@@ -12,7 +12,6 @@ const Calendar = memo(function Calendar({activeChain}) {
 
   const [dates, setDates] = useState([]);
 
-
   useEffect(() => {
     const linkRef = collection(FIRESTORE_DB, `chains/${activeChain}/dates`);
 
@@ -55,9 +54,6 @@ const Calendar = memo(function Calendar({activeChain}) {
     }).catch((error) => {
       console.log(error)
     })
-
-   // doc = addDoc(collection(FIRESTORE_DB, "dates"), {date: date});
-    //console.log(doc)
   }
 
   function deleteLink(ref, date) {

@@ -15,8 +15,8 @@ export default function CustomDrawer(props) {
         <DrawerItemList {...props} />
       </DrawerContentScrollView>
 
-      <View>
-        <Text>Meow</Text>
+      <View style={{flex:1, alignItems: "center"}}>
+        <Text>meow</Text>
       </View>
 
     </View>
