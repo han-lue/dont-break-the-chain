@@ -1,11 +1,6 @@
 import React, { Component, useState } from 'react'
 import { SafeAreaView, Button, TextInput} from 'react-native';
 
-import { FIRESTORE_DB } from "../../firebaseConfig.js"
-
-import { doc, setDoc} from "firebase/firestore"
-
-
 
 export default function CreateChain() {
 
@@ -13,12 +8,6 @@ export default function CreateChain() {
 
   function createChain() {
 
-    setDoc(doc(FIRESTORE_DB, `chains/`, chainName), {
-    }).then(() => {
-      console.log("submitted")
-    }).catch((error) => {
-      console.log(error)
-    })
 
   }
 
