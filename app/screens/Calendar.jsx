@@ -2,16 +2,68 @@ import React, {useEffect, useState, memo} from 'react';
 import { SafeAreaView, StyleSheet, View, Button} from 'react-native';
 import {CalendarList} from 'react-native-calendars';
 
+import { FIRESTORE_DB } from "../../firebaseConfig.js"
+import { doc, setDoc, collection, onSnapshot, deleteDoc } from "firebase/firestore"
+
 import "./Calendar.css";
 
 
 const Calendar = memo(function Calendar({activeChain}) {
 
+  const [dates, setDates] = useState([]);
+
+  useEffect(() => {
+    const linkRef = collection(FIRESTORE_DB, `chains/${activeChain}/dates`);
+
+    console.log(activeChain);
+
+    const subscriber = onSnapshot(linkRef, {
+      next: (snapshot) => {
+        let links = [];
+
+        snapshot.docs.forEach((doc) => { 
+          links.push({
+            ...doc.data()
+          })
+        });
+        setDates(links);
+      },
+    });
+
+    return () => subscriber();
+  }, [])
 
   function handlePress(date) {
+    const ref = doc(FIRESTORE_DB, `chains/${activeChain}/dates/${date}`);
+
+    //console.log(dates)
+
+    if (dates.some( item => item['date'] == date )) {
+      deleteLink(ref, date);
+    } else {
+      addLink(date);
+    } 
   }
 
-  /*
+  function addLink(date) {
+
+    setDoc(doc(FIRESTORE_DB, `chains/${activeChain}/dates`, date), {
+      date: date
+    }).then(() => {
+      console.log("submitted " + date)
+    }).catch((error) => {
+      console.log(error)
+    })
+  }
+
+  function deleteLink(ref, date) {
+    deleteDoc(ref)
+    .then(() => {
+      console.log("deleted " + date)
+    }).catch((error) => {
+      console.log(error)
+    })
+  }
 
   let obj;
 
@@ -28,8 +80,7 @@ const Calendar = memo(function Calendar({activeChain}) {
           }
         }, 
       }})));
-  } 
-  */
+  }
 
   return (
     <SafeAreaView class="meow">
@@ -72,7 +123,7 @@ const Calendar = memo(function Calendar({activeChain}) {
       
       markingType={"custom"}
 
-      //markedDates={obj}
+      markedDates={obj}
       />
     </SafeAreaView>
   );
