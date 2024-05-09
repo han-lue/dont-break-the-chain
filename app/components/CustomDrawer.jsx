@@ -8,7 +8,6 @@ import { NavigationContainer } from '@react-navigation/native';
 
 export default function CustomDrawer(props) {
 
-
   return (
     <View style={{flex:1}}>
       <DrawerContentScrollView {...props}>
@@ -16,7 +15,6 @@ export default function CustomDrawer(props) {
       </DrawerContentScrollView>
 
       <View style={{flex:1, alignItems: "center"}}>
-        <Text>meow</Text>
       </View>
 
     </View>
