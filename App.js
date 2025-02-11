@@ -16,6 +16,14 @@ const Drawer = createDrawerNavigator();
 export default function App() {
 
   const [chains, setChains] = useState(["gym", "reading", "english"]);
+
+
+
+  function openOptions(chainId) { //right now it deletes the chain immediately, without any options
+    console.log(chainId);
+
+    setChains(chains.filter(item => item !== chainId))
+  }
   
   
   return (
@@ -41,8 +49,7 @@ export default function App() {
           )
         }
 
-        <Drawer.Screen name='Create New' component={CreateChain} options={{headerStyle: {}}}
-            ></Drawer.Screen>
+        <Drawer.Screen name='Create New' component={CreateChain} options={{headerStyle: {}}}></Drawer.Screen>
         
       </Drawer.Navigator>
     </NavigationContainer>

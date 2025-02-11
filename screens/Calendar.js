@@ -33,9 +33,11 @@ export default function Calendar() {
     obj = Object.assign(...dates.map(date => ({[date]: { 
       customStyles: {
         container: {
-          borderRadius: 20, 
+          borderRadius: 10, 
           width: "100%",
-          backgroundColor: "red"
+          backgroundColor: "red",
+          // borderWidth: 2, // having a border causes issues with allignment of the date text
+          // borderColor: "black",
         },
         text: {
             color: "white"
