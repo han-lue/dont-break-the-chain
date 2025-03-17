@@ -13,13 +13,10 @@ export default function CustomDrawer(props) {
   const [chains, setChains] = useState(["gym", "reading", "english"]);
 
   return (
-    <View style={{flex:1}}>
+    <View style={{flex: 1,  flexDirection: "column-reverse"}}>
       <DrawerContentScrollView {...props}>
         <DrawerItemList {...props} />
       </DrawerContentScrollView>
-
-      <View style={{flex:1, alignItems: "center"}}>
-      </View>
 
     </View>
     )

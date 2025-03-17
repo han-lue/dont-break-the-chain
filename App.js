@@ -17,8 +17,6 @@ export default function App() {
 
   const [chains, setChains] = useState(["gym", "reading", "english"]);
 
-
-
   function openOptions(chainId) { //right now it deletes the chain immediately, without any options
     console.log(chainId);
 
@@ -29,7 +27,8 @@ export default function App() {
   return (
     <NavigationContainer>
       <Drawer.Navigator 
-      drawerContent={props => <CustomDrawer{...props}/>}
+      style={{flex: 1,  justifyContent: "space-between"}} 
+      drawerContent={props =><CustomDrawer{...props}/>}
       screenOptions={{
         headerShown: true
     }} 
